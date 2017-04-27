@@ -1,0 +1,57 @@
+zone.js:2164 POST http://localhost:50149/src/data.json 405 (Method Not Allowed)
+scheduleTask @ zone.js:2164
+ZoneDelegate.scheduleTask @ zone.js:384
+onScheduleTask @ zone.js:274
+ZoneDelegate.scheduleTask @ zone.js:378
+Zone.scheduleTask @ zone.js:209
+Zone.scheduleMacroTask @ zone.js:232
+(anonymous) @ zone.js:2188
+send @ VM45:3
+(anonymous) @ http.umd.js:1229
+Observable.subscribe @ Observable.ts:98
+AppComponent.addb @ app.component.ts:67
+View_AppComponent0.handleEvent_32 @ /AppModule/AppComponent/component.ngfactory.js:277
+(anonymous) @ platform-browser.umd.js:3221
+ZoneDelegate.invokeTask @ zone.js:398
+onInvokeTask @ core.umd.js:4426
+ZoneDelegate.invokeTask @ zone.js:397
+Zone.runTask @ zone.js:165
+ZoneTask.invoke @ zone.js:460
+core.umd.js:3525 EXCEPTION: Response with status: 405 Method Not Allowed for URL: http://localhost:50149/src/data.json
+ErrorHandler.handleError @ core.umd.js:3525
+next @ core.umd.js:8537
+schedulerFn @ core.umd.js:4146
+SafeSubscriber.__tryOrUnsub @ Subscriber.ts:238
+SafeSubscriber.next @ Subscriber.ts:190
+Subscriber._next @ Subscriber.ts:135
+Subscriber.next @ Subscriber.ts:95
+Subject.next @ Subject.ts:61
+EventEmitter.emit @ core.umd.js:4132
+NgZone.triggerError @ core.umd.js:4495
+onHandleError @ core.umd.js:4456
+ZoneDelegate.handleError @ zone.js:369
+Zone.runTask @ zone.js:168
+ZoneTask.invoke @ zone.js:460
+Subscriber.ts:241 Uncaught Response {_body: "<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Stric…↵ </fieldset> ↵</div> ↵</div> ↵</body> ↵</html> ↵", status: 405, ok: false, statusText: "Method Not Allowed", headers: Headers…}
+SafeSubscriber.__tryOrUnsub @ Subscriber.ts:241
+SafeSubscriber.next @ Subscriber.ts:190
+Subscriber._next @ Subscriber.ts:135
+Subscriber.next @ Subscriber.ts:95
+Subject.next @ Subject.ts:61
+EventEmitter.emit @ core.umd.js:4132
+NgZone.triggerError @ core.umd.js:4495
+onHandleError @ core.umd.js:4456
+ZoneDelegate.handleError @ zone.js:369
+Zone.runTask @ zone.js:168
+ZoneTask.invoke @ zone.js:460
+zone.js:169 Uncaught TypeError: Cannot read property 'apply' of undefined
+    at globalOnerror (common.js:143)
+    at wrapFn (zone.js:1230)
+    at ZoneDelegate.invokeTask (zone.js:398)
+    at Zone.runTask (zone.js:165)
+    at ZoneTask.invoke (zone.js:460)
+globalOnerror @ common.js:143
+wrapFn @ zone.js:1230
+ZoneDelegate.invokeTask @ zone.js:398
+Zone.runTask @ zone.js:165
+ZoneTask.invoke @ zone.js:460
