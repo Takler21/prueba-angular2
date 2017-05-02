@@ -18,6 +18,7 @@ export class AppServices {
     headers = new Headers({
        
         'Content-Type': 'application/json',
+        'Accept': 'application/json' 
       
          
     });
@@ -35,14 +36,14 @@ export class AppServices {
         //let headers = new Headers({ 'Content-Type': 'application/json' });
         let options = new RequestOptions({
             method: RequestMethod.Post,
-            url: 'data.json',
+            url: "data.json",
             headers: this.headers
         });
 
         //return this.http.post("data.json", JSON.stringify(body), { headers: { 'Content-Type': 'application/json' } })
           //  .map((res: Response) => res.json())
-          //  .catch((error: any) => Observable.throw(error.json().error || 'Server error'));
-        return this.http.post( "data.json", JSON.stringify(body), options)
+        //  .catch((error: any) => Observable.throw(error.json().error || 'Server error'));
+        return this.http.request(new Request(options))
         
 
     }

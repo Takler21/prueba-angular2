@@ -8,16 +8,16 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-var core_1 = require("@angular/core");
-var http_1 = require("@angular/http");
-require("rxjs/add/operator/map");
-require("rxjs/add/operator/catch");
+var core_1 = require('@angular/core');
+var http_1 = require('@angular/http');
+require('rxjs/add/operator/map');
+require('rxjs/add/operator/catch');
 var AppServices = (function () {
     function AppServices(http) {
         this.http = http;
         this.headers = new http_1.Headers({
             'Content-Type': 'application/json',
+            'Accept': 'application/json'
         });
     }
     AppServices.prototype.getJSON = function () {
@@ -30,19 +30,19 @@ var AppServices = (function () {
         //let headers = new Headers({ 'Content-Type': 'application/json' });
         var options = new http_1.RequestOptions({
             method: http_1.RequestMethod.Post,
-            url: 'data.json',
+            url: "data.json",
             headers: this.headers
         });
         //return this.http.post("data.json", JSON.stringify(body), { headers: { 'Content-Type': 'application/json' } })
         //  .map((res: Response) => res.json())
         //  .catch((error: any) => Observable.throw(error.json().error || 'Server error'));
-        return this.http.post("data.json", JSON.stringify(body), options);
+        return this.http.request(new http_1.Request(options));
     };
+    AppServices = __decorate([
+        core_1.Injectable(), 
+        __metadata('design:paramtypes', [http_1.Http])
+    ], AppServices);
     return AppServices;
 }());
-AppServices = __decorate([
-    core_1.Injectable(),
-    __metadata("design:paramtypes", [http_1.Http])
-], AppServices);
 exports.AppServices = AppServices;
 //# sourceMappingURL=search.service.js.map
