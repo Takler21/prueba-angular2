@@ -21,22 +21,35 @@ var AppServices = (function () {
         });
     }
     AppServices.prototype.getJSON = function () {
-        return this.http.get("data.json")
+        return this.http.get("http://localhost:3000/art")
             .map(function (res) { return res.json(); })
             .catch(function (error) { return console.log(error); });
     };
     AppServices.prototype.add = function (body) {
-        // let bodyString = JSON.stringify(body); // Stringify payload
-        //let headers = new Headers({ 'Content-Type': 'application/json' });
         var options = new http_1.RequestOptions({
             method: http_1.RequestMethod.Post,
-            url: "data.json",
-            headers: this.headers
+            headers: this.headers,
+            body: JSON.stringify(body),
+            url: "http://localhost:3000/art"
         });
-        //return this.http.post("data.json", JSON.stringify(body), { headers: { 'Content-Type': 'application/json' } })
-        //  .map((res: Response) => res.json())
-        //  .catch((error: any) => Observable.throw(error.json().error || 'Server error'));
         return this.http.request(new http_1.Request(options));
+    };
+    AppServices.prototype.update = function (body) {
+        var options = new http_1.RequestOptions({
+            method: http_1.RequestMethod.Put,
+            headers: this.headers,
+            body: JSON.stringify(body),
+            url: 'http://localhost:3000/art/' + body.id
+        });
+        return this.http.request(new http_1.Request(options));
+    };
+    AppServices.prototype.delete = function (id) {
+        var options = new http_1.RequestOptions({
+            method: http_1.RequestMethod.Delete,
+            headers: this.headers,
+            url: 'http://localhost:3000/art/' + id
+        });
+        return this.http.request(new http_1.Request(options).json());
     };
     AppServices = __decorate([
         core_1.Injectable(), 
@@ -45,4 +58,9 @@ var AppServices = (function () {
     return AppServices;
 }());
 exports.AppServices = AppServices;
+// let bodyString = JSON.stringify(body); // Stringify payload
+//let headers = new Headers({ 'Content-Type': 'application/json' });
+//return this.http.post("data.json", JSON.stringify(body), { headers: { 'Content-Type': 'application/json' } })
+//  .map((res: Response) => res.json())
+//  .catch((error: any) => Observable.throw(error.json().error || 'Server error')); 
 //# sourceMappingURL=search.service.js.map
