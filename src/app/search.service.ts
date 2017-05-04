@@ -1,7 +1,7 @@
 ﻿import { Component, Input } from '@angular/core';
 import { Injectable }     from '@angular/core';
 import {Route} from '@angular/router';
-import { Http, Response, Headers, RequestOptions, Request, RequestMethod} from '@angular/http';
+import { Http, Response, Headers, RequestOptions, Request, RequestMethod, Jsonp} from '@angular/http';
 import {Observable} from 'rxjs/Rx';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
@@ -12,12 +12,12 @@ import 'rxjs/add/operator/catch';
 export class AppServices {
 
 
-    constructor(public http: Http){}
+    constructor(public http: Http, public jsonp: Jsonp){}
 
     headers = new Headers({
        
         'Content-Type': 'application/json',
-        'Accept': 'application/json'     
+        'Accept': 'application/json',  
     });
 
 
@@ -51,12 +51,15 @@ export class AppServices {
     }
 
     public delete(id): Observable<any> {
+        let aux: any;
         let options = new RequestOptions({
             method: RequestMethod.Delete,
             headers: this.headers,
             url: 'http://localhost:3000/art/' + id
-        });
-        return this.http.request(new Request(options).json());
+          });
+        return this.http.request(new Request(options));
+        
+          
     }
 }
 

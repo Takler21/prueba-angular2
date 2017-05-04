@@ -13,11 +13,12 @@ var http_1 = require('@angular/http');
 require('rxjs/add/operator/map');
 require('rxjs/add/operator/catch');
 var AppServices = (function () {
-    function AppServices(http) {
+    function AppServices(http, jsonp) {
         this.http = http;
+        this.jsonp = jsonp;
         this.headers = new http_1.Headers({
             'Content-Type': 'application/json',
-            'Accept': 'application/json'
+            'Accept': 'application/json',
         });
     }
     AppServices.prototype.getJSON = function () {
@@ -44,16 +45,17 @@ var AppServices = (function () {
         return this.http.request(new http_1.Request(options));
     };
     AppServices.prototype.delete = function (id) {
+        var aux;
         var options = new http_1.RequestOptions({
             method: http_1.RequestMethod.Delete,
             headers: this.headers,
             url: 'http://localhost:3000/art/' + id
         });
-        return this.http.request(new http_1.Request(options).json());
+        return this.http.request(new http_1.Request(options));
     };
     AppServices = __decorate([
         core_1.Injectable(), 
-        __metadata('design:paramtypes', [http_1.Http])
+        __metadata('design:paramtypes', [http_1.Http, http_1.Jsonp])
     ], AppServices);
     return AppServices;
 }());

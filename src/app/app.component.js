@@ -13,8 +13,6 @@ var search_service_1 = require('./search.service');
 var AppComponent = (function () {
     function AppComponent(appservice) {
         this.appservice = appservice;
-        this.verd = true;
-        this.logs = [];
     }
     AppComponent.prototype.ngOnInit = function () {
         var _this = this;
@@ -22,39 +20,55 @@ var AppComponent = (function () {
             return _this.datos = res;
         });
     };
-    AppComponent.prototype.redirect = function () {
+    AppComponent.prototype.ngOnchange = function (changes) {
+        var _this = this;
+        //if (changes['datos'])
+        this.appservice.getJSON().subscribe(function (res) {
+            return _this.datos = res;
+        });
     };
     AppComponent.prototype.addb = function () {
         var _this = this;
         var obj;
-        //let idp = 0;
-        // for (let i = 0; i < this.datos.length; i++) {
-        //     if (this.datos[i].id !== (i + 1))
-        //         idp = this.datos[i].id
-        // }
-        // if (idp === 0)
-        //     idp = this.datos.length;
-        obj = { title: this.title, category: this.category };
+        var idp = 0;
+        for (var i = 0; i < this.datos.length; i++) {
+            if (this.datos[i].id != (i + 1))
+                idp = this.datos[i].id;
+        }
+        if (idp == 0)
+            idp = this.datos.length;
+        this.dat = { title: this.title, category: this.category };
+        this.vari = { estado: this.estado };
+        obj = { datos: this.dat, varios: this.vari };
         this.appservice.add(obj).subscribe(function (per) { return _this.datos.push(per); }, function (error) { return _this.errorMessage = error; });
-        this.ngOnInit();
+        this.appservice.getJSON().subscribe(function (res) {
+            return _this.datos = res;
+        });
     };
     AppComponent.prototype.alform = function (post) {
-        this.title = post.title;
-        this.category = post.category;
+        this.title = post.datos.title;
+        this.category = post.datos.category;
         this.id = post.id;
+        this.estado = post.varios.estado;
     };
     AppComponent.prototype.modificar = function (post) {
+        var _this = this;
         var obj;
-        obj = { id: post.id, title: post.title, category: post.category };
+        obj = { id: this.id, datos: { title: this.title, category: this.category }, varios: { estado: this.estado } };
         this.appservice.update(obj).subscribe();
-        this.ngOnInit();
+        this.appservice.getJSON().subscribe(function (res) {
+            return _this.datos = res;
+        });
     };
     AppComponent.prototype.delet = function (post) {
+        var _this = this;
         this.appservice.delete(post.id).subscribe();
-        this.ngOnInit();
-    };
-    AppComponent.prototype.log = function (message) {
-        this.logs.push(message);
+        this.appservice.getJSON().subscribe(function (res) {
+            return _this.datos = res;
+        });
+        this.appservice.getJSON().subscribe(function (res) {
+            return _this.datos = res;
+        });
     };
     __decorate([
         core_1.Input(), 
@@ -63,8 +77,8 @@ var AppComponent = (function () {
     AppComponent = __decorate([
         core_1.Component({
             selector: 'my-app',
-            template: "\n            \n          <div class=\"container\" id=\"main\">\n           <div class=\"center-block\">    \n               <div id = \"header\"></div>\n               <div id = \"content\">\n               \n                 <h1>Gestor JSON Angular 2</h1>\n                <label for=\"sel\">Seleccione un titulo</label>\n                <table>\n                    <tr><th>id</th><th>Nombre</th><th>Categoria</th><th>Opciones</th></tr>\n                    <tr *ngFor=\"let post of datos\">\n                        <td>{{post.id}}</td>\n                        <td><input class=\"form-control form-control-lg\" [(ngModel)]=\"post.title\" /></td>\n                        <td><input class=\"form-control form-control-lg\" [(ngModel)]=\"post.category\" /></td>\n                        <td><button type=\"button\" class=\"btn btn-warning\" (click)=\"alform(post)\" >A\u00F1adir</button>\n                            <button type=\"button\" class=\"btn btn-warning\" (click)=\"modificar(post)\">Modificar</button>\n                            <button type=\"button\" class=\"btn btn-warning\" (click)=\"delet(post)\">Eliminar</button></td>\n                    </tr>\n                    \n                </table>\n\n                <hr>\n                <my-collap nombre=\"Articulos\">\n                \n                   <div class=\"form-group row\"> \n                   <label class=\"col-sm-1 col-form-label\">Titulo: </label>   <div class=\"col-sm-3\"><input class=\"form-control\" [(ngModel)]=\"title\" /></div>\n                   </div>\n                   <div class=\"form-group row\"> \n                   <label class=\"col-sm-1 col-form-label\">Categoria: </label>  <div class=\"col-sm-3\"><input class=\"form-control\" [(ngModel)]=\"category\" /></div>\n                </div>\n                </my-collap>\n               \n               <button type=\"button\" class=\"btn btn-warning\" (click)=\"addb()\">A\u00F1adir</button>\n            </div>\n            </div>\n          </div>\n  \t\t ",
-            providers: [search_service_1.AppServices],
+            template: "\n            \n          <div class=\"container\" id=\"main\">\n           <div class=\"center-block\">    \n               <div id = \"header\"></div>\n               <div id = \"content\">\n               \n                 <h1>Gestor JSON Angular 2</h1>\n                <label for=\"sel\">Seleccione un titulo</label>\n                <table class=\"table table-striped\">\n                    <thead><tr><th>id</th><th>Nombre</th><th>Categoria</th><th>Opciones</th></tr></thead>\n                    <tbody>\n                    <tr *ngFor=\"let post of datos\">\n                        <td>{{post.id}}</td>\n                        <td>{{post.datos?.title}}</td>\n                        <td>{{post.datos?.category}}</td>\n                        <td><button type=\"button\" class=\"btn btn-warning\" (click)=\"alform(post)\" >A\u00F1adir</button>\n                            \n                            <button type=\"button\" class=\"btn btn-warning\" (click)=\"delet(post)\">Eliminar</button></td></tr>\n                    </tbody>\n                </table>\n\n                <hr>\n                <div class=\"panel-group\">\n                <div class=\"panel panel-default\">\n                <my-collap nombre=\"Articulos\">\n\n                    <div class=\"panel-body\">\n                    <div class=\"panel panel-default\">\n\n                    <my-collap nombre=\"datos\">\n\n                        <div class=\"panel-body\">\n                        <div class=\"form-group row\"> \n                        <label class=\"col-sm-1 col-form-label\">Titulo: </label>     \n                        <div class=\"col-sm-3\"><input class=\"form-control\" [(ngModel)]=\"title\" /></div>\n                        </div>\n                        <div class=\"form-group row\"> \n                        <label class=\"col-sm-1 col-form-label\">Categoria: </label>  \n                        <div class=\"col-sm-3\"><input class=\"form-control\" [(ngModel)]=\"category\" /></div>\n                        </div>\n                        </div>\n                    </my-collap>\n                    </div>\n\n                    <div class=\"panel panel-default\">\n\n                    <my-collap nombre=\"varios\">\n\n                        <div class=\"panel-body\">\n                        <div class=\"form-group row\"> \n                        <label class=\"col-sm-1 col-form-label\">Estado: </label>   \n                        <div class=\"col-sm-3\"><input class=\"form-control\" [(ngModel)]=\"estado\" /></div>\n                        </div>\n                        </div>\n                    </my-collap>\n                    </div>\n                    </div>\n                </my-collap>\n               \n               <button type=\"button\" class=\"btn btn-warning\" (click)=\"addb()\">A\u00F1adir</button>\n               <button type=\"button\" class=\"btn btn-warning\" (click)=\"modificar(post)\">Modificar</button>\n            </div>\n            </div>\n            </div>\n            </div>\n          </div>\n  \t\t ",
+            providers: [search_service_1.AppServices]
         }), 
         __metadata('design:paramtypes', [search_service_1.AppServices])
     ], AppComponent);

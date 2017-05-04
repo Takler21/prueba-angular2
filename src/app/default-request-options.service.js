@@ -21,6 +21,7 @@ var DefaultRequestOptions = (function (_super) {
         _super.call(this);
         // Set the default 'Content-Type' header
         this.headers.set('Content-Type', 'application/json');
+        this.headers.append('Accept', 'application/json');
     }
     DefaultRequestOptions = __decorate([
         core_1.Injectable(), 
