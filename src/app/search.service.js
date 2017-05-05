@@ -21,35 +21,35 @@ var AppServices = (function () {
             'Accept': 'application/json',
         });
     }
-    AppServices.prototype.getJSON = function () {
-        return this.http.get("http://localhost:3000/art")
+    AppServices.prototype.getJSON = function (url) {
+        return this.http.get(url)
             .map(function (res) { return res.json(); })
             .catch(function (error) { return console.log(error); });
     };
-    AppServices.prototype.add = function (body) {
+    AppServices.prototype.add = function (url, body) {
         var options = new http_1.RequestOptions({
             method: http_1.RequestMethod.Post,
             headers: this.headers,
             body: JSON.stringify(body),
-            url: "http://localhost:3000/art"
+            url: url
         });
         return this.http.request(new http_1.Request(options));
     };
-    AppServices.prototype.update = function (body) {
+    AppServices.prototype.update = function (url, body) {
         var options = new http_1.RequestOptions({
             method: http_1.RequestMethod.Put,
             headers: this.headers,
             body: JSON.stringify(body),
-            url: 'http://localhost:3000/art/' + body.id
+            url: url + body.id
         });
         return this.http.request(new http_1.Request(options));
     };
-    AppServices.prototype.delete = function (id) {
+    AppServices.prototype.delete = function (url, id) {
         var aux;
         var options = new http_1.RequestOptions({
             method: http_1.RequestMethod.Delete,
             headers: this.headers,
-            url: 'http://localhost:3000/art/' + id
+            url: url + id
         });
         return this.http.request(new http_1.Request(options));
     };

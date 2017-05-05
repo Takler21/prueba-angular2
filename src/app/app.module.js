@@ -16,14 +16,15 @@ var http_1 = require('@angular/http');
 var default_request_options_service_1 = require('./default-request-options.service');
 var app_component_1 = require('./app.component');
 var collapse_component_1 = require('./collapse.component');
+var sort_pipe_1 = require('./sort.pipe');
 var AppModule = (function () {
     function AppModule() {
     }
     AppModule = __decorate([
         core_1.NgModule({
             imports: [platform_browser_1.BrowserModule, router_1.RouterModule, forms_1.FormsModule, http_1.HttpModule, http_1.JsonpModule],
-            declarations: [app_component_1.AppComponent, collapse_component_1.CollapseComponent],
-            providers: [default_request_options_service_1.requestOptionsProvider],
+            declarations: [app_component_1.AppComponent, collapse_component_1.CollapseComponent, sort_pipe_1.SortPipe],
+            providers: [default_request_options_service_1.requestOptionsProvider, sort_pipe_1.SortPipe],
             bootstrap: [app_component_1.AppComponent]
         }), 
         __metadata('design:paramtypes', [])

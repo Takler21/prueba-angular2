@@ -22,40 +22,40 @@ export class AppServices {
 
 
 
-    public getJSON(): Observable<any> {
-        return this.http.get("http://localhost:3000/art")
-            .map((res: any) => res.json())
+    public getJSON(url:string): Observable<any> {
+        return this.http.get(url)
+            .map((res: Response) => res.json())
             .catch((error: any) => console.log(error));
     }
 
-    public add(body: any): Observable<any> {
+    public add(url: string, body: any): Observable<any> {
         let options = new RequestOptions({
             method: RequestMethod.Post,
             headers: this.headers,
             body: JSON.stringify(body),
-            url: "http://localhost:3000/art"
+            url: url
         });
         return this.http.request(new Request(options));
     }
 
-    public update(body: any): Observable<any>
+    public update(url: string ,body: any): Observable<any>
     {
         let options = new RequestOptions({
             method: RequestMethod.Put,
             headers: this.headers,
             body: JSON.stringify(body),
-            url: 'http://localhost:3000/art/' + body.id
+            url: url + body.id
         });
         return this.http.request(new Request(options))
            
     }
 
-    public delete(id): Observable<any> {
+    public delete(url: string, id): Observable<any> {
         let aux: any;
         let options = new RequestOptions({
             method: RequestMethod.Delete,
             headers: this.headers,
-            url: 'http://localhost:3000/art/' + id
+            url: url + id
           });
         return this.http.request(new Request(options));
         
