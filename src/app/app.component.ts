@@ -2,6 +2,7 @@ import {Component, OnInit, Input, Output, EventEmitter, SimpleChanges, OnChanges
 import { NgFor, NgIf}         from '@angular/common';
 import {AppServices} from './search.service';
 import {Post, Datos, Varios} from './post.interface';
+//Busco que la tabla y el formulario se generen automaticamente con el json file que se les pase, contar con que hay elementos anidados.
 
 const DATA2 = "http://localhost:3000/art/";
 @Component({
@@ -24,7 +25,7 @@ const DATA2 = "http://localhost:3000/art/";
                         <td>{{post.id}}</td>
                         <td>{{post.datos?.title}}</td>
                         <td>{{post.datos?.category}}</td>
-                        <td><button type="button" class="btn btn-warning" (click)="alform(post)" >Añadir</button>
+                        <td><button type="button" class="btn btn-warning" (click)="alform(post)" >AÃ±adir</button>
                         <button type="button" class="btn btn-warning" (click)="delet(post)">Eliminar</button></td>
                         
                     </tr>
@@ -77,7 +78,7 @@ const DATA2 = "http://localhost:3000/art/";
                     </div>
                 </my-collap>
                
-               <button type="button" class="btn btn-warning" (click)="addb()">Añadir</button>
+               <button type="button" class="btn btn-warning" (click)="addb()">AÃ±adir</button>
                <button type="button" class="btn btn-warning" (click)="modificar(post)">Modificar</button>
             </div>
             </div>
