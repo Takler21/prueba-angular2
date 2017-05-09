@@ -1,4 +1,4 @@
-import {Component, OnInit, Input, Output, EventEmitter, SimpleChanges, OnChanges} from '@angular/core';
+import {Component, OnInit, Input, Output, EventEmitter, SimpleChanges, OnChanges, ViewContainerRef, ViewChild, ReflectiveInjector, ComponentFactoryResolver} from '@angular/core';
 import { NgFor, NgIf}         from '@angular/common';
 import {AppServices} from './search.service';
 import {Post, Datos, Varios} from './post.interface';
@@ -32,6 +32,7 @@ const DATA2 = "http://localhost:3000/art/";
                 </table>
                 </div>
                 <hr>
+               
                 <div class="panel-group">
                 <div class="panel panel-default">
                 <my-collap nombre="Articulos">
@@ -68,6 +69,9 @@ const DATA2 = "http://localhost:3000/art/";
                         </div>
                         </div>
                         {{estado}}
+                            <div *ngIf="datos">
+                        {{datos[0].datos?.title}}
+                            </div>
                     </my-collap>
                     </div>
                     </div>
@@ -85,32 +89,38 @@ const DATA2 = "http://localhost:3000/art/";
 
 })
 
-//En lugar de cargar en el select podriamos cargar en eun array y de este mostar en el select.
 export class AppComponent implements OnInit {
     @Input() datos: Post[];
+    @Input() keys: any[];
     errorMessage: any;
+    //Puede que declarando el metodo post en el el formulario pueda librarme de estas variables.
+    //Inicio Variables
     id: number;
     title: string;
     category: string;
     estado: boolean = true;
+    //fin variables
+    
+
     constructor(public appservice: AppServices) {
     }
 
+
+    //Lo principal es asignar los elementos de la estructura de datos a un objeto, actualmente usamos un post, 
+    //pero es posible que en el futuro usemos solo obj para permitir una mayor diversidad de EEDD
     ngOnInit() {
         this.appservice.getJSON(DATA2).subscribe(res =>
-            this.datos = res);
+            this.datos = res,
+            error => this.errorMessage = error,
+            () => this.keys = this.datos ? Object.keys(this.datos) : []);
     }
-
-    
-
+    //Metodo para guardar el cambio del elemento booleano de la estructura de datos el cual es gestionado en un Radio Button
     onCheck(v: boolean) {
-        
             this.estado = v;
-       
     }
 
+   //haber si podemos eliminar la dependencia en variables locales, El id lo presupondremos como clave primaria de los elementos.
     addb() {
-        let obj: Post;
         let idp: number = 1;
         let cont = true
         this.datos.forEach(post => {
@@ -121,25 +131,25 @@ export class AppComponent implements OnInit {
                     cont = false;
             }
         });
-        obj = { id: idp, datos: { title: this.title, category: this.category }, varios: { estado: this.estado } };
+        let obj: Post = { id: idp, datos: { title: this.title, category: this.category }, varios: { estado: this.estado } };
         this.appservice.add(DATA2,obj).subscribe(
             per => this.datos.push(per),
             error => this.errorMessage = <any>error,
             () => this.appservice.getJSON(DATA2).subscribe(res =>
                 this.datos = res)
         );
-        this.datos.sort;
-        
+        this.datos.sort;      
     }
 
-    alform(post) {
+    //tal vez mejor llevarlo a otro componente si es que acabo haciendo la tabla y el formulario en otro componente
+    alform(post: Post) { 
         this.title = post.datos.title;
         this.category = post.datos.category;
         this.id = post.id;
         this.estado = post.varios.estado;
     }
-
-    modificar(post) {
+    //haber si podemos eliminar completamente la dependencia en variables locales.
+    modificar(post: Post) {
         let obj: Post;
         obj = { id: this.id, datos: { title: this.title, category: this.category }, varios: { estado: this.estado } };
         this.appservice.update(DATA2, obj).subscribe();
@@ -151,7 +161,7 @@ export class AppComponent implements OnInit {
         );
     }
 
-    delet(post) {
+    delet(post: Post) {
         this.appservice.delete(DATA2, post.id).subscribe(
             data => null,
             error => this.errorMessage = <any>error,

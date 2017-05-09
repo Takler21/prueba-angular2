@@ -12,22 +12,26 @@ var core_1 = require('@angular/core');
 var search_service_1 = require('./search.service');
 var DATA2 = "http://localhost:3000/art/";
 var AppComponent = (function () {
+    //fin variables
     function AppComponent(appservice) {
         this.appservice = appservice;
         this.estado = true;
     }
+    //Lo principal es asignar los elementos de la estructura de datos a un objeto, actualmente usamos un post, 
+    //pero es posible que en el futuro usemos solo obj para permitir una mayor diversidad de EEDD
     AppComponent.prototype.ngOnInit = function () {
         var _this = this;
         this.appservice.getJSON(DATA2).subscribe(function (res) {
             return _this.datos = res;
-        });
+        }, function (error) { return _this.errorMessage = error; }, function () { return _this.keys = _this.datos ? Object.keys(_this.datos) : []; });
     };
+    //Metodo para guardar el cambio del elemento booleano de la estructura de datos el cual es gestionado en un Radio Button
     AppComponent.prototype.onCheck = function (v) {
         this.estado = v;
     };
+    //haber si podemos eliminar la dependencia en variables locales, El id lo presupondremos como clave primaria de los elementos.
     AppComponent.prototype.addb = function () {
         var _this = this;
-        var obj;
         var idp = 1;
         var cont = true;
         this.datos.forEach(function (post) {
@@ -38,18 +42,20 @@ var AppComponent = (function () {
                     cont = false;
             }
         });
-        obj = { id: idp, datos: { title: this.title, category: this.category }, varios: { estado: this.estado } };
+        var obj = { id: idp, datos: { title: this.title, category: this.category }, varios: { estado: this.estado } };
         this.appservice.add(DATA2, obj).subscribe(function (per) { return _this.datos.push(per); }, function (error) { return _this.errorMessage = error; }, function () { return _this.appservice.getJSON(DATA2).subscribe(function (res) {
             return _this.datos = res;
         }); });
         this.datos.sort;
     };
+    //tal vez mejor llevarlo a otro componente si es que acabo haciendo la tabla y el formulario en otro componente
     AppComponent.prototype.alform = function (post) {
         this.title = post.datos.title;
         this.category = post.datos.category;
         this.id = post.id;
         this.estado = post.varios.estado;
     };
+    //haber si podemos eliminar completamente la dependencia en variables locales.
     AppComponent.prototype.modificar = function (post) {
         var _this = this;
         var obj;
@@ -69,10 +75,14 @@ var AppComponent = (function () {
         core_1.Input(), 
         __metadata('design:type', Array)
     ], AppComponent.prototype, "datos", void 0);
+    __decorate([
+        core_1.Input(), 
+        __metadata('design:type', Array)
+    ], AppComponent.prototype, "keys", void 0);
     AppComponent = __decorate([
         core_1.Component({
             selector: 'my-app',
-            template: "\n            \n          <div class=\"container\" id=\"main\">\n           <div class=\"center-block\">    \n               <div id = \"header\"></div>\n               <div id = \"content\">\n               \n              <h1>Gestor JSON Angular 2</h1>\n                <div *ngIf=\"datos\">\n                <table class=\"table table-striped\">\n                    <thead><tr><th>id</th><th>Nombre</th><th>Categoria</th><th>Opciones</th></tr></thead>\n                    <tbody>\n                    \n                    <tr *ngFor=\"let post of datos | sortBy : 'id'\">\n                        \n                        <td>{{post.id}}</td>\n                        <td>{{post.datos?.title}}</td>\n                        <td>{{post.datos?.category}}</td>\n                        <td><button type=\"button\" class=\"btn btn-warning\" (click)=\"alform(post)\" >A\u00F1adir</button>\n                        <button type=\"button\" class=\"btn btn-warning\" (click)=\"delet(post)\">Eliminar</button></td>\n                        \n                    </tr>\n                    </tbody>\n                </table>\n                </div>\n                <hr>\n                <div class=\"panel-group\">\n                <div class=\"panel panel-default\">\n                <my-collap nombre=\"Articulos\">\n\n                    <div class=\"panel-body\">\n                    <div class=\"panel panel-default\">\n\n                    <my-collap nombre=\"datos\">\n\n                        <div class=\"panel-body\">\n                        <div class=\"form-group row\"> \n                        <label class=\"col-sm-1 col-form-label\">Titulo: </label>     \n                        <div class=\"col-sm-3\"><input class=\"form-control\" [(ngModel)]=\"title\" /></div>\n                        </div>\n                        <div class=\"form-group row\"> \n                        <label class=\"col-sm-1 col-form-label\">Categoria: </label>  \n                        <div class=\"col-sm-3\"><input class=\"form-control\" [(ngModel)]=\"category\" /></div>\n                        </div>\n                        </div>\n                    </my-collap>\n                    </div>\n                    {{datos}}\n                    <div class=\"panel panel-default\">\n\n                    <my-collap nombre=\"varios\">\n                            \n                        <div class=\"panel-body\">\n                        <div class=\"form-group row\"> \n                        <label class=\"col-sm-1 col-form-label\">Estado: </label>   \n                        <div class=\"col-sm-3\">\n                            <label class=\"radio-inline\"><input type=\"radio\" name=\"disponibilidad\" (change)=\"onCheck(true)\" [checked]=\"estado\" value=true />Disponible</label>\n                            <label class=\"radio-inline\"><input type=\"radio\" name=\"disponibilidad\" (change)=\"onCheck(false)\" [checked]=\"!estado\" value=false />agotado</label>\n                        </div>\n                        </div>\n                        </div>\n                        {{estado}}\n                    </my-collap>\n                    </div>\n                    </div>\n                </my-collap>\n               \n               <button type=\"button\" class=\"btn btn-warning\" (click)=\"addb()\">A\u00F1adir</button>\n               <button type=\"button\" class=\"btn btn-warning\" (click)=\"modificar(post)\">Modificar</button>\n            </div>\n            </div>\n            </div>\n            </div>\n          </div>\n  \t\t ",
+            template: "\n            \n          <div class=\"container\" id=\"main\">\n           <div class=\"center-block\">    \n               <div id = \"header\"></div>\n               <div id = \"content\">\n               \n              <h1>Gestor JSON Angular 2</h1>\n                <div *ngIf=\"datos\">\n                <table class=\"table table-striped\">\n                    <thead><tr><th>id</th><th>Nombre</th><th>Categoria</th><th>Opciones</th></tr></thead>\n                    <tbody>\n                    \n                    <tr *ngFor=\"let post of datos | sortBy : 'id'\">\n                        \n                        <td>{{post.id}}</td>\n                        <td>{{post.datos?.title}}</td>\n                        <td>{{post.datos?.category}}</td>\n                        <td><button type=\"button\" class=\"btn btn-warning\" (click)=\"alform(post)\" >A\u00F1adir</button>\n                        <button type=\"button\" class=\"btn btn-warning\" (click)=\"delet(post)\">Eliminar</button></td>\n                        \n                    </tr>\n                    </tbody>\n                </table>\n                </div>\n                <hr>\n               \n                <div class=\"panel-group\">\n                <div class=\"panel panel-default\">\n                <my-collap nombre=\"Articulos\">\n\n                    <div class=\"panel-body\">\n                    <div class=\"panel panel-default\">\n\n                    <my-collap nombre=\"datos\">\n\n                        <div class=\"panel-body\">\n                        <div class=\"form-group row\"> \n                        <label class=\"col-sm-1 col-form-label\">Titulo: </label>     \n                        <div class=\"col-sm-3\"><input class=\"form-control\" [(ngModel)]=\"title\" /></div>\n                        </div>\n                        <div class=\"form-group row\"> \n                        <label class=\"col-sm-1 col-form-label\">Categoria: </label>  \n                        <div class=\"col-sm-3\"><input class=\"form-control\" [(ngModel)]=\"category\" /></div>\n                        </div>\n                        </div>\n                    </my-collap>\n                    </div>\n                    {{datos}}\n                    <div class=\"panel panel-default\">\n\n                    <my-collap nombre=\"varios\">\n                            \n                        <div class=\"panel-body\">\n                        <div class=\"form-group row\"> \n                        <label class=\"col-sm-1 col-form-label\">Estado: </label>   \n                        <div class=\"col-sm-3\">\n                            <label class=\"radio-inline\"><input type=\"radio\" name=\"disponibilidad\" (change)=\"onCheck(true)\" [checked]=\"estado\" value=true />Disponible</label>\n                            <label class=\"radio-inline\"><input type=\"radio\" name=\"disponibilidad\" (change)=\"onCheck(false)\" [checked]=\"!estado\" value=false />agotado</label>\n                        </div>\n                        </div>\n                        </div>\n                        {{estado}}\n                            <div *ngIf=\"datos\">\n                        {{datos[0].datos?.title}}\n                            </div>\n                    </my-collap>\n                    </div>\n                    </div>\n                </my-collap>\n               \n               <button type=\"button\" class=\"btn btn-warning\" (click)=\"addb()\">A\u00F1adir</button>\n               <button type=\"button\" class=\"btn btn-warning\" (click)=\"modificar(post)\">Modificar</button>\n            </div>\n            </div>\n            </div>\n            </div>\n          </div>\n  \t\t ",
             providers: [search_service_1.AppServices],
         }), 
         __metadata('design:paramtypes', [search_service_1.AppServices])
