@@ -1,3 +1,4 @@
+//Busco que la tabla y el formulario se generen automaticamente con el json file que se les pase, contar con que hay elementos anidados.
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
