@@ -3,7 +3,7 @@ import { NgFor, NgIf}         from '@angular/common';
 import {AppServices} from './search.service';
 import {Post, Datos, Varios} from './post.interface';
 //Busco que la tabla y el formulario se generen automaticamente con el json file que se les pase, contar con que hay elementos anidados.
-
+//Y en conjunto hacerlo más reutilizable.
 const DATA2 = "http://localhost:3000/art/";
 @Component({
     selector: 'my-app',
