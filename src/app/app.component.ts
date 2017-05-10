@@ -2,8 +2,7 @@ import {Component, OnInit, Input, Output, EventEmitter, SimpleChanges, OnChanges
 import { NgFor, NgIf}         from '@angular/common';
 import {AppServices} from './search.service';
 import {Post, Datos, Varios} from './post.interface';
-//Busco que la tabla y el formulario se generen automaticamente con el json file que se les pase, contar con que hay elementos anidados.
-//Y en conjunto hacerlo m√°s reutilizable.
+
 const DATA2 = "http://localhost:3000/art/";
 @Component({
     selector: 'my-app',
@@ -15,23 +14,37 @@ const DATA2 = "http://localhost:3000/art/";
                <div id = "content">
                
               <h1>Gestor JSON Angular 2</h1>
-                <div *ngIf="datos">
+               
                 <table class="table table-striped">
-                    <thead><tr><th>id</th><th>Nombre</th><th>Categoria</th><th>Opciones</th></tr></thead>
+                    <thead>
+                    <tr *ngIf="datos">
+                        <template ngFor let-key2 [ngForOf]="keys2" let-key2Index="index">
+                            <th *ngIf="!isObject(datos[0][key2])" ngDefaultControl >{{key2}}</th> 
+                        <template ngFor let-key [ngForOf]="keys" let-keyIndex="index">
+                            <th *ngIf="datos[0][key2][key] !== empty" ngDefaultControl >{{key}}</th> 
+                    </template>
+                    </template>
+                        <th>Opciones</th>   
+                    </tr>
+                    </thead>
                     <tbody>
                     
                     <tr *ngFor="let post of datos | sortBy : 'id'">
                         
-                        <td>{{post.id}}</td>
-                        <td>{{post.datos?.title}}</td>
-                        <td>{{post.datos?.category}}</td>
-                        <td><button type="button" class="btn btn-warning" (click)="alform(post)" >A√±adir</button>
+                        
+                        <template ngFor let-key2 [ngForOf]="keys2" let-key2Index="index">
+                            <td *ngIf="!isObject(post[key2])" ngDefaultControl >{{post[key2]}}</td> 
+                        <template ngFor let-key [ngForOf]="keys" let-keyIndex="index">
+                            <td *ngIf="post[key2][key] !== empty" ngDefaultControl >{{post[key2][key]}}</td> 
+                        </template>
+                        </template>
+                        <td><button type="button" class="btn btn-warning" (click)="alform(post)" >AÒadir</button>
                         <button type="button" class="btn btn-warning" (click)="delet(post)">Eliminar</button></td>
                         
                     </tr>
                     </tbody>
                 </table>
-                </div>
+
                 <hr>
                
                 <div class="panel-group">
@@ -78,21 +91,24 @@ const DATA2 = "http://localhost:3000/art/";
                     </div>
                 </my-collap>
                
-               <button type="button" class="btn btn-warning" (click)="addb()">A√±adir</button>
+               <button type="button" class="btn btn-warning" (click)="addb()">AÒadir</button>
                <button type="button" class="btn btn-warning" (click)="modificar(post)">Modificar</button>
             </div>
             </div>
+                <!--<generator [datos]="datos" [url]="DATA2"></generator>-->
             </div>
             </div>
           </div>
+
   		 `,
     providers: [AppServices],
 
 })
+//<td [(ngModel)]="post.datos[t]" ngDefaultControl contenteditable='true'>
+//{{post.datos[t]}} </td>   Funciona para usar parametros en el binding
 
 export class AppComponent implements OnInit {
     @Input() datos: Post[];
-    @Input() keys: any[];
     errorMessage: any;
     //Puede que declarando el metodo post en el el formulario pueda librarme de estas variables.
     //Inicio Variables
@@ -101,11 +117,14 @@ export class AppComponent implements OnInit {
     category: string;
     estado: boolean = true;
     //fin variables
-    
+    @Input() keys2: string[]
+    @Input() keys: string[]= []
+
 
     constructor(public appservice: AppServices) {
     }
 
+    isObject(val) { return typeof val === 'object'; }
 
     //Lo principal es asignar los elementos de la estructura de datos a un objeto, actualmente usamos un post, 
     //pero es posible que en el futuro usemos solo obj para permitir una mayor diversidad de EEDD
@@ -113,14 +132,29 @@ export class AppComponent implements OnInit {
         this.appservice.getJSON(DATA2).subscribe(res =>
             this.datos = res,
             error => this.errorMessage = error,
-            () => this.keys = this.datos ? Object.keys(this.datos) : []);
-    }
-    //Metodo para guardar el cambio del elemento booleano de la estructura de datos el cual es gestionado en un Radio Button
-    onCheck(v: boolean) {
-            this.estado = v;
+            () => this.sacar());
     }
 
-   //haber si podemos eliminar la dependencia en variables locales, El id lo presupondremos como clave primaria de los elementos.
+    sacar() {
+        this.datos.forEach(post => {
+            this.keys2 = Object.keys(post);
+            let t3: string[] = [];
+            if (this.keys) {
+                this.keys2.forEach(key => {
+
+                    t3 = t3.concat(Object.keys(post[key]))
+                });
+            }
+            this.keys = t3;
+        });
+    };
+
+    //Metodo para guardar el cambio del elemento booleano de la estructura de datos el cual es gestionado en un Radio Button
+    onCheck(v: boolean) {
+        this.estado = v;
+    }
+
+    //haber si podemos eliminar la dependencia en variables locales, El id lo presupondremos como clave primaria de los elementos.
     addb() {
         let idp: number = 1;
         let cont = true
@@ -133,17 +167,17 @@ export class AppComponent implements OnInit {
             }
         });
         let obj: Post = { id: idp, datos: { title: this.title, category: this.category }, varios: { estado: this.estado } };
-        this.appservice.add(DATA2,obj).subscribe(
-            per => this.datos.push(per),
+        this.appservice.add(DATA2, obj).subscribe(
+            data => null,
             error => this.errorMessage = <any>error,
             () => this.appservice.getJSON(DATA2).subscribe(res =>
                 this.datos = res)
         );
-        this.datos.sort;      
+        this.datos.sort;
     }
 
     //tal vez mejor llevarlo a otro componente si es que acabo haciendo la tabla y el formulario en otro componente
-    alform(post: Post) { 
+    alform(post: Post) {
         this.title = post.datos.title;
         this.category = post.datos.category;
         this.id = post.id;
@@ -153,8 +187,7 @@ export class AppComponent implements OnInit {
     modificar(post: Post) {
         let obj: Post;
         obj = { id: this.id, datos: { title: this.title, category: this.category }, varios: { estado: this.estado } };
-        this.appservice.update(DATA2, obj).subscribe();
-        this.appservice.getJSON(DATA2).subscribe(
+        this.appservice.update(DATA2, obj).subscribe(
             data => null,
             error => this.errorMessage = <any>error,
             () => this.appservice.getJSON(DATA2).subscribe(res =>
@@ -169,6 +202,6 @@ export class AppComponent implements OnInit {
             () => this.appservice.getJSON(DATA2).subscribe(res =>
                 this.datos = res)
         );
-        
+
     }
 }
