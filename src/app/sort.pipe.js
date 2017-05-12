@@ -13,18 +13,20 @@ var SortPipe = (function () {
     function SortPipe() {
     }
     SortPipe.prototype.transform = function (array, args) {
-        array.sort(function (a, b) {
-            if (a[args] < b[args]) {
-                return -1;
-            }
-            else if (a[args] > b[args]) {
-                return 1;
-            }
-            else {
-                return 0;
-            }
-        });
-        return array;
+        if (array) {
+            array.sort(function (a, b) {
+                if (a[args] < b[args]) {
+                    return -1;
+                }
+                else if (a[args] > b[args]) {
+                    return 1;
+                }
+                else {
+                    return 0;
+                }
+            });
+            return array;
+        }
     };
     SortPipe = __decorate([
         core_1.Pipe({ name: "sortBy" }), 
