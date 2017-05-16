@@ -10,20 +10,23 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 var core_1 = require('@angular/core');
 var search_service_1 = require('./search.service');
-var DATA2 = "http://localhost:3000/art/";
+var api = "art";
+var DATA2 = "http://localhost:3000/" + api + "/";
 var AppComponent = (function () {
     function AppComponent(appservice) {
         this.appservice = appservice;
-        this.estado = true;
         this.tipes = [];
         this.keys2 = [];
         this.keys = [];
+        this.optionals = [];
+        this.validation = true;
     }
     //Lo principal es asignar los elementos de la estructura de datos a un objeto, actualmente usamos un post, 
     //pero es posible que en el futuro usemos solo obj para permitir una mayor diversidad de EEDD, 
     //Los metodos JSON son para que test coja el valor de test sin vincularse a post
     AppComponent.prototype.ngOnInit = function () {
         var _this = this;
+        api = "art";
         this.appservice.getJSON(DATA2).subscribe(function (res) {
             return _this.datos = res;
         }, function (error) { return _this.errorMessage = error; }, function () {
@@ -31,31 +34,52 @@ var AppComponent = (function () {
             _this.test = JSON.parse(JSON.stringify(_this.datos[0]));
         });
     };
-    //Saca las claves y los tipos de los elementos del primer nivel
+    //Saca las claves y los tipos de los elementos, asi como los campos opcionales
     AppComponent.prototype.sacar = function () {
-        //No uso datos[0] debido a habra que considear los valores opcionales, el proceso para obtener todas las llaves esta hecho, falta el confirmar opcionales
         var _this = this;
         this.datos.forEach(function (post) {
-            if (_this.keys2 != Object.keys(post))
-                _this.keys2 = Object.keys(post);
+            var t2 = [];
             var t3 = [];
             var t4 = [];
             var aux;
-            _this.keys2.forEach(function (key) {
-                t4[key] = _this.isType(post[key]);
-                _this.keys.forEach(function (k) {
-                    if (post[key][k] != null)
-                        t4[k] = _this.isType(post[key][k]);
+            //Extraer los campos que no aparecen en todos los post
+            if (_this.keys2.length == 0)
+                _this.keys2 = Object.keys(post);
+            if (_this.keys2 != Object.keys(post)) {
+                _this.keys2.forEach(function (key) {
+                    if (_this.keys2[key] == null && _this.optionals[key] == null) {
+                        _this.keys2[key] = key;
+                        _this.optionals[key] = _this.keys2[key];
+                    }
                 });
+                Object.keys(post).forEach(function (key) {
+                    if (Object.keys(post)[key] == null && _this.optionals[key] == null) {
+                        _this.optionals[key] = key;
+                    }
+                });
+            }
+            //Extraer los campos que no aparecen en todos los post
+            _this.keys2.forEach(function (key) {
                 if (_this.isObject(post[key]))
                     t3 = t3.concat(Object.keys(post[key]));
+                if (_this.keys != t3) {
+                    //if (this.keys == null o []) ?
+                    Object.keys(t3).forEach(function (a) {
+                        if (_this.keys[a] != t3[a])
+                            _this.keys[a] = t3[a];
+                    });
+                }
+                _this.keys.forEach(function (k) {
+                    if (post[key][k] != null) {
+                        if (_this.keys[k] == null)
+                            _this.tipes[k] = _this.isType(post[key][k]);
+                    }
+                });
+                if (_this.tipes[key] == null)
+                    _this.tipes[key] = _this.isType(post[key]);
             });
-            if (_this.keys != t3)
-                _this.keys = t3;
-            _this.tipes = t4;
-            _this.lee = t4["datos"];
         });
-        this.caca = Object.keys(this.datos);
+        this.lee = Object.keys(this.optionals);
     };
     AppComponent.prototype.isObject = function (val) { return typeof val === 'object'; };
     AppComponent.prototype.isType = function (val) { return typeof val; };
@@ -66,21 +90,23 @@ var AppComponent = (function () {
     //haber si podemos eliminar la dependencia en variables locales, El id lo presupondremos como clave primaria de los elementos.
     AppComponent.prototype.addb = function () {
         var _this = this;
-        var idp = 1;
-        var cont = true;
-        this.datos.forEach(function (post) {
-            if (cont) {
-                if (post.id == idp)
-                    idp = idp + 1;
-                else
-                    cont = false;
-            }
-        });
-        this.test.id = idp;
-        this.appservice.add(DATA2, this.test).subscribe(function (data) { return null; }, function (error) { return _this.errorMessage = error; }, function () { return _this.appservice.getJSON(DATA2).subscribe(function (res) {
-            return _this.datos = res;
-        }); });
-        this.datos.sort;
+        if (this.validar(this.test)) {
+            var idp_1 = 1;
+            var cont_1 = true;
+            this.datos.forEach(function (post) {
+                if (cont_1) {
+                    if (post.id == idp_1)
+                        idp_1 = idp_1 + 1;
+                    else
+                        cont_1 = false;
+                }
+            });
+            this.test.id = idp_1;
+            this.appservice.add(DATA2, this.test).subscribe(function (data) { return null; }, function (error) { return _this.errorMessage = error; }, function () { return _this.appservice.getJSON(DATA2).subscribe(function (res) {
+                return _this.datos = res;
+            }); });
+            this.datos.sort;
+        }
     };
     //tal vez mejor llevarlo a otro componente si es que acabo haciendo la tabla y el formulario en otro componente
     AppComponent.prototype.alform = function (post) {
@@ -93,15 +119,28 @@ var AppComponent = (function () {
     //haber si podemos eliminar completamente la dependencia en variables locales.
     AppComponent.prototype.modificar = function (post) {
         var _this = this;
-        this.appservice.update(DATA2, this.test).subscribe(function (data) { return null; }, function (error) { return _this.errorMessage = error; }, function () { return _this.appservice.getJSON(DATA2).subscribe(function (res) {
-            return _this.datos = res;
-        }); });
+        if (this.validar(this.test)) {
+            this.appservice.update(DATA2, this.test).subscribe(function (data) { return null; }, function (error) { return _this.errorMessage = error; }, function () { return _this.appservice.getJSON(DATA2).subscribe(function (res) {
+                return _this.datos = res;
+            }); });
+        }
     };
     AppComponent.prototype.delet = function (post) {
         var _this = this;
         this.appservice.delete(DATA2, post.id).subscribe(function (data) { return null; }, function (error) { return _this.errorMessage = error; }, function () { return _this.appservice.getJSON(DATA2).subscribe(function (res) {
             return _this.datos = res;
         }); });
+    };
+    AppComponent.prototype.validar = function (post) {
+        var val = true;
+        for (var _i = 0, _a = this.datos; _i < _a.length; _i++) {
+            var p = _a[_i];
+            if (post.datos.title == p.datos.title) {
+                val = false;
+            }
+        }
+        this.validation = val;
+        return val;
     };
     __decorate([
         core_1.Input(), 
@@ -119,6 +158,10 @@ var AppComponent = (function () {
         core_1.Input(), 
         __metadata('design:type', Array)
     ], AppComponent.prototype, "keys", void 0);
+    __decorate([
+        core_1.Input(), 
+        __metadata('design:type', Array)
+    ], AppComponent.prototype, "optionals", void 0);
     AppComponent = __decorate([
         core_1.Component({
             selector: 'my-app',

@@ -1,5 +1,19 @@
 ﻿<div class="container" id="main">
+   
     {{lee}}
+    <!--    OPCIONAL    -->
+
+    <!-- Puede que modificando el sacar para que coja los campos de 0, despues de ello donde se comprueban que no sean iguales, 
+        podriamos guardar el que se añade a un array que sera de opcionales, y habra que comprobar por los dos lados, desde t3 
+        y desde keys, y haber que hacemos con keys2.
+        
+        A la hora de generar comprobar si la llave de opcional esta en datos[0], y si no es asi ..., 
+        en el caso de que este habra que pasar la antes para que haga un input que no sea requerido. -->
+
+    <!--    OPCIONAL    -->
+
+
+    <!-- Habra que considerar con campos opcionales -->
     <div class="center-block">
         <div id="header"></div>
         <div id="content">
@@ -44,7 +58,7 @@
                 <div class="panel panel-default">
                     <!--EMPIEZA EL FORMULARIO-->
                     <form #form="ngForm">
-                        <my-collap nombre="Articulos" id="Articulos">
+                        <my-collap nombre="Campos" id="Campos">
                             <div class="panel-body">
                                 <div class="panel panel-default">
                                    
@@ -122,7 +136,10 @@
                        
                         <button type="button" class="btn btn-warning" (click)="addb(test)" [disabled]="!form.valid">Añadir</button>
                         <button type="button" class="btn btn-warning" (click)="modificar(post)" [disabled]="!form.valid">Modificar</button>
-                    </form>
+                        <div class="aler alert-danger" [hidden]="validation">
+                            Criterios no satisfechos, por favor, no repita titulos.
+                        </div>
+</form>
                     <!-- ACABA EL FORMULARIO -->
                 </div>
             </div>
