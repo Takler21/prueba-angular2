@@ -17,9 +17,9 @@ var AppComponent = (function () {
         this.appservice = appservice;
         this.messageE = ['Criterios no cumplidos:'];
         this.tipes = [];
-        this.keys2 = [];
-        this.keys3 = [];
         this.keys = [];
+        this.keys3 = [];
+        this.keysHijas = [];
         this.sons = [];
         this.optionals = [];
         this.validation = true;
@@ -43,27 +43,28 @@ var AppComponent = (function () {
         this.datos.forEach(function (post) {
             var t3 = [];
             var aux = Object.keys(post);
-            //Extraer los campos que no aparecen en todos los post
-            if (_this.keys2.length == 0) {
-                _this.keys2 = Object.keys(post);
-                _this.keys2.forEach(function (key) {
+            //Extraer llaves iniciales del primer nivel
+            if (_this.keys.length == 0) {
+                _this.keys = Object.keys(post);
+                _this.keys.forEach(function (key) {
                     _this.tipes[key] = _this.isType(post[key]);
                 });
             }
             else {
-                if (_this.keys2 != aux) {
-                    Object.keys(_this.keys2).forEach(function (key) {
-                        if (_this.keys2[key] != aux[key] && _this.optionals[_this.keys2[key]] != _this.keys2[key]) {
+                //Extrae los campos opcionales del primer nivel, ademas de obtener su tipo
+                if (_this.keys != aux) {
+                    Object.keys(_this.keys).forEach(function (key) {
+                        if (_this.keys[key] != aux[key] && _this.optionals[_this.keys[key]] != _this.keys[key]) {
                             var esta_1 = false;
                             aux.forEach(function (k2) {
-                                if (k2 == _this.keys2[key])
+                                if (k2 == _this.keys[key])
                                     esta_1 = true;
                             });
                             if (!esta_1)
-                                _this.optionals[_this.keys2[key]] = _this.keys2[_this.keys2[key]];
+                                _this.optionals[_this.keys[key]] = _this.keys[_this.keys[key]];
                             else {
                                 if (!_this.optionals[aux[key]] && !_this.tipes[aux[key]]) {
-                                    _this.keys2.forEach(function (k2) {
+                                    _this.keys.forEach(function (k2) {
                                         if (k2 == aux[key])
                                             esta_1 = false;
                                     });
@@ -77,89 +78,95 @@ var AppComponent = (function () {
                     });
                 }
             }
-            //Extraer los campos que no aparecen en todos los post
-            if (_this.keys.length == 0) {
-                _this.keys2.forEach(function (key) {
+            // //Extraer llaves iniciales del segundo nivel
+            if (_this.keysHijas.length == 0) {
+                _this.keys.forEach(function (key) {
                     if (_this.isObject(post[key]))
                         t3 = t3.concat(Object.keys(post[key]));
-                    //if (this.keys == null o []) ?
                     Object.keys(t3).forEach(function (a) {
-                        _this.keys[a] = t3[a];
+                        _this.keysHijas[a] = t3[a];
                         if (!_this.sons[t3[a]])
                             _this.sons[t3[a]] = key;
                     });
                 });
             }
-            _this.keys2.forEach(function (key) {
+            //Saca los elementos opcionales del segundo nivel, ademas de vincular cada elemento con su padre
+            _this.keys.forEach(function (key) {
                 if (_this.isObject(post[key]))
                     t3 = t3.concat(Object.keys(post[key]));
-                if (_this.keys != t3) {
-                    //if (this.keys == null o []) ?
+                if (_this.keysHijas != t3) {
                     t3.forEach(function (a) {
                         var esta = false;
-                        _this.keys.forEach(function (k) {
+                        _this.keysHijas.forEach(function (k) {
                             if (k == a) {
                                 esta = true;
                             }
                         });
                         if (!esta) {
-                            _this.keys.push(a);
+                            _this.keysHijas.push(a);
+                            if (!_this.optionals[a])
+                                _this.optionals[a] = a;
                             if (!_this.sons[a])
                                 _this.sons[a] = key;
                         }
                     });
                 }
-                _this.keys.forEach(function (k) {
-                    if (post[key][k] != null) {
-                        if (_this.keys[k] == null)
-                            _this.tipes[k] = _this.isType(post[key][k]);
-                    }
-                });
                 if (_this.tipes[key] == null)
                     _this.tipes[key] = _this.isType(post[key]);
             });
+            //Saca los tipos de los elementos opcionales de los elementos mayores, y les vincula sus respectivos elementos hijos.
             _this.keys3.forEach(function (key) {
                 if (_this.tipes[key] == null)
                     _this.tipes[key] = _this.isType(post[key]);
                 if (_this.tipes[key] == "object") {
                     t3 = t3.concat(Object.keys(post[key]));
-                    //if (this.keys == null o []) ?
                     Object.keys(t3).forEach(function (a) {
-                        _this.keys[a] = t3[a];
+                        _this.keysHijas[a] = t3[a];
                         if (!_this.sons[t3[a]])
                             _this.sons[t3[a]] = key;
                     });
                 }
             });
+            //Saca los tipos de los elementos menores
+            _this.keysHijas.forEach(function (k) {
+                if (post[_this.sons[k]][k] != null) {
+                    if (!_this.tipes[k]) {
+                        _this.tipes[k] = _this.isType(post[_this.sons[k]][k]);
+                    }
+                }
+            });
         });
-        this.keys2 = this.keys2.concat(this.keys3);
-        this.lee = Object.keys(this.optionals) + "   ;   " + Object.keys(this.keys2) + "   ;   " + Object.keys(this.keys) + "   ;   " + Object.keys(this.tipes) + "   ;   " + Object.keys(this.sons) + "   ;   " + this.keys2[1];
+        //Añade las llaves de los elementos opcionales al conjuntos de llaves mayores.
+        this.keys = this.keys.concat(this.keys3);
     };
     AppComponent.prototype.isObject = function (val) { return typeof val === 'object'; };
     AppComponent.prototype.isType = function (val) { return typeof val; };
-    AppComponent.prototype.k2s = function (val) { return this.sons[val]; };
     //Metodo para guardar el cambio del elemento booleano de la estructura de datos el cual es gestionado en un Radio Button
-    AppComponent.prototype.onCheck = function (v, key2, key) {
-        this.test[key2][key] = v;
+    AppComponent.prototype.onCheck = function (v, key, keyH) {
+        this.test[key][keyH] = v;
     };
-    AppComponent.prototype.onCheck2 = function (v, key2) {
-        this.test[key2] = v;
+    AppComponent.prototype.onCheck2 = function (v, key) {
+        this.test[key] = v;
+    };
+    AppComponent.prototype.onCheckBox = function (checked, key, keyH) {
+        if (!checked)
+            this.test[key][keyH] = null;
     };
     //haber si podemos eliminar la dependencia en variables locales, El id lo presupondremos como clave primaria de los elementos.
-    AppComponent.prototype.addb = function () {
+    AppComponent.prototype.addb = function (test) {
         var _this = this;
-        if (this.validar(this.test)) {
-            var idp_1 = 1;
-            var cont_1 = true;
-            this.datos.forEach(function (post) {
-                if (cont_1) {
-                    if (post.id == idp_1)
-                        idp_1 = idp_1 + 1;
-                    else
-                        cont_1 = false;
-                }
-            });
-            this.test.id = idp_1;
+        var idp = 1;
+        var cont = true;
+        this.datos.forEach(function (post) {
+            if (cont) {
+                if (post.id == idp)
+                    idp = idp + 1;
+                else
+                    cont = false;
+            }
+        });
+        test.id = idp;
+        if (this.validar(test)) {
             this.appservice.add(DATA2, this.test).subscribe(function (data) { return null; }, function (error) { return _this.errorMessage = error; }, function () { return _this.appservice.getJSON(DATA2).subscribe(function (res) {
                 return _this.datos = res;
             }); });
@@ -215,7 +222,7 @@ var AppComponent = (function () {
     __decorate([
         core_1.Input(), 
         __metadata('design:type', Array)
-    ], AppComponent.prototype, "keys2", void 0);
+    ], AppComponent.prototype, "keys", void 0);
     __decorate([
         core_1.Input(), 
         __metadata('design:type', Array)
@@ -223,7 +230,7 @@ var AppComponent = (function () {
     __decorate([
         core_1.Input(), 
         __metadata('design:type', Array)
-    ], AppComponent.prototype, "keys", void 0);
+    ], AppComponent.prototype, "keysHijas", void 0);
     __decorate([
         core_1.Input(), 
         __metadata('design:type', Array)

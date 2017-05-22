@@ -11,8 +11,6 @@ const DATA2 = "http://localhost:3000/" + api + "/";
     selector: 'my-app',
     templateUrl: 'app/app.component.html',
     providers: [AppServices],
-
-
 })
 //<td [(ngModel)]="post.datos[t]" ngDefaultControl contenteditable='true'>
 //{{post.datos[t]}} </td>   Funciona para usar parametros en el binding
@@ -22,15 +20,15 @@ export class AppComponent implements OnInit {
     @Input() datos: any[];
     errorMessage: any;
     test: any;
-    lee: any;
     messageE = ['Criterios no cumplidos:'];
     @Input() tipes: any[] = [];
-    @Input() keys2: string[] = [];
-    @Input() keys3: string[] = [];
     @Input() keys: string[] = [];
+    @Input() keys3: string[] = [];
+    @Input() keysHijas: string[] = [];
     @Input() sons: string[] = [];
     @Input() optionals: string[] = [];
     validation: boolean = true;
+    lee: any;
     constructor(public appservice: AppServices) {
     }
 
@@ -56,30 +54,30 @@ export class AppComponent implements OnInit {
             let t3: string[] = [];
             let aux: string[] = Object.keys(post);
 
-            //Extraer los campos que no aparecen en todos los post
-            if (this.keys2.length == 0) { //Iniciar los valores
-                this.keys2 = Object.keys(post);
-                this.keys2.forEach(key => {
+            //Extraer llaves iniciales del primer nivel
+            if (this.keys.length == 0) { //Iniciar los valores
+                this.keys = Object.keys(post);
+                this.keys.forEach(key => {
                     this.tipes[key] = this.isType(post[key]);
                 });
             }
 
             else {
-
-                if (this.keys2 != aux) {
-                    Object.keys(this.keys2).forEach(key => {
-                        if (this.keys2[key] != aux[key] && this.optionals[this.keys2[key]] != this.keys2[key]) {
+                //Extrae los campos opcionales del primer nivel, ademas de obtener su tipo
+                if (this.keys != aux) {
+                    Object.keys(this.keys).forEach(key => {
+                        if (this.keys[key] != aux[key] && this.optionals[this.keys[key]] != this.keys[key]) {
                             let esta = false;
                             aux.forEach(k2 => {
-                                if (k2 == this.keys2[key])
+                                if (k2 == this.keys[key])
                                     esta = true;
                             });
                             if (!esta)
-                                this.optionals[this.keys2[key]] = this.keys2[this.keys2[key]];
+                                this.optionals[this.keys[key]] = this.keys[this.keys[key]];
                             else {
                                 if (!this.optionals[aux[key]] && !this.tipes[aux[key]]) {
 
-                                    this.keys2.forEach(k2 => {
+                                    this.keys.forEach(k2 => {
                                         if (k2 == aux[key])
                                             esta = false;
                                     });
@@ -89,102 +87,105 @@ export class AppComponent implements OnInit {
                                     }
                                 }
                             }
-
                         }
-                    });
-                    
+                    }); 
                 }
             }
-            //Extraer los campos que no aparecen en todos los post
-            if (this.keys.length == 0) { //Iniciar los valores
-                this.keys2.forEach(key => {
+            // //Extraer llaves iniciales del segundo nivel
+            if (this.keysHijas.length == 0) { //Iniciar los valores
+                this.keys.forEach(key => {
                     if (this.isObject(post[key]))
                         t3 = t3.concat(Object.keys(post[key]));
-                    //if (this.keys == null o []) ?
                     Object.keys(t3).forEach(a => {
-                        this.keys[a] = t3[a];
+                        this.keysHijas[a] = t3[a];
                         if (!this.sons[t3[a]])
                             this.sons[t3[a]] = key;
                     });
 
                 });
             }
-
-            this.keys2.forEach(key => {
+            //Saca los elementos opcionales del segundo nivel, ademas de vincular cada elemento con su padre
+            this.keys.forEach(key => {
                 if (this.isObject(post[key]))
                     t3 = t3.concat(Object.keys(post[key]));
-                if (this.keys != t3) {
-                    //if (this.keys == null o []) ?
+                if (this.keysHijas != t3) {
                     t3.forEach(a => {
                         let esta = false;
-                        this.keys.forEach(k => {
+                        this.keysHijas.forEach(k => {
                             if (k == a) {
                                 esta = true;
                             }
                         });
                         if (!esta) {
-                            this.keys.push(a);
+                            this.keysHijas.push(a);
+                            if (!this.optionals[a])
+                            this.optionals[a] = a;
                             if (!this.sons[a])
                                 this.sons[a] = key;
                         }
                     });
                 }
-                this.keys.forEach(k => {
-                    if (post[key][k] != null) {
-                        if (this.keys[k] == null)
-                            this.tipes[k] = this.isType(post[key][k]);
-                    }
-                });
+
                 if (this.tipes[key] == null)
                     this.tipes[key] = this.isType(post[key]);
-            });
+                });
+            //Saca los tipos de los elementos opcionales de los elementos mayores, y les vincula sus respectivos elementos hijos.
             this.keys3.forEach(key => {
                 if (this.tipes[key] == null)
                     this.tipes[key] = this.isType(post[key]);
                 if (this.tipes[key] == "object") {
                     t3 = t3.concat(Object.keys(post[key]));
-                    //if (this.keys == null o []) ?
                     Object.keys(t3).forEach(a => {
-                        this.keys[a] = t3[a];
+                        this.keysHijas[a] = t3[a];
                         if (!this.sons[t3[a]])
                             this.sons[t3[a]] = key;
                     });
                 }
             });
 
+            //Saca los tipos de los elementos menores
+            this.keysHijas.forEach(k => {
+                if (post[this.sons[k]][k] != null) {
+                    if (!this.tipes[k]) {
+                        this.tipes[k] = this.isType(post[this.sons[k]][k]);
+                    }
+                }
+            });
         });
-        this.keys2 = this.keys2.concat(this.keys3);
-        this.lee = Object.keys(this.optionals) + "   ;   " + Object.keys(this.keys2) + "   ;   " + Object.keys(this.keys) + "   ;   " + Object.keys(this.tipes) + "   ;   " + Object.keys(this.sons) + "   ;   " + this.keys2[1];
+        //Añade las llaves de los elementos opcionales al conjuntos de llaves mayores.
+        this.keys = this.keys.concat(this.keys3);
     }
 
     isObject(val) { return typeof val === 'object'; }
 
     isType(val) { return typeof val; }
-    k2s(val) { return this.sons[val]; }
 
     //Metodo para guardar el cambio del elemento booleano de la estructura de datos el cual es gestionado en un Radio Button
-    onCheck(v: boolean, key2: string, key: string) {
-        this.test[key2][key] = v;
+    onCheck(v: boolean, key: string, keyH: string) {
+        this.test[key][keyH] = v;
     }
-    onCheck2(v: boolean, key2: string) {
-        this.test[key2] = v;
+    onCheck2(v: boolean, key: string) {
+        this.test[key] = v;
+    }
+    onCheckBox(checked, key: string, keyH: string) {
+        if (!checked)
+            this.test[key][keyH] = null;
     }
 
     //haber si podemos eliminar la dependencia en variables locales, El id lo presupondremos como clave primaria de los elementos.
-    addb() {
-        if (this.validar(this.test)) {
-            let idp: number = 1;
-            let cont = true
-            this.datos.forEach(post => {
-                if (cont) {
-                    if (post.id == idp)
-                        idp = idp + 1;
-                    else
-                        cont = false;
-                }
-            });
-            this.test.id = idp;
-
+    addb(test) {
+        let idp: number = 1;
+        let cont = true
+        this.datos.forEach(post => {
+            if (cont) {
+                if (post.id == idp)
+                    idp = idp + 1;
+                else
+                    cont = false;
+            }
+        });
+        test.id = idp;
+        if (this.validar(test)) {
             this.appservice.add(DATA2, this.test).subscribe(
                 data => null,
                 error => this.errorMessage = <any>error,
