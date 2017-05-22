@@ -1,0 +1,8 @@
+<div>
+    <a href="#" (click)="toggle()" class="title">
+        {{ isOpen ? '+' : '-'}} {{nombre}}
+    </a>
+    <div [hidden]="!isOpen" class="content">
+        <ng-content></ng-content>
+    </div>
+</div>
