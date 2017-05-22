@@ -47,8 +47,8 @@ export class AppComponent implements OnInit {
                 this.test = JSON.parse(JSON.stringify(this.datos[0]));
             });
     }
-    //Saca las claves y los tipos de los elementos, asi como los campos opcionales
 
+    //Saca las claves y los tipos de los elementos, asi como los campos opcionales
     sacar() {
         this.datos.forEach(post => {
             let t3: string[] = [];
@@ -63,6 +63,7 @@ export class AppComponent implements OnInit {
             }
 
             else {
+
                 //Extrae los campos opcionales del primer nivel, ademas de obtener su tipo
                 if (this.keys != aux) {
                     Object.keys(this.keys).forEach(key => {
@@ -88,9 +89,10 @@ export class AppComponent implements OnInit {
                                 }
                             }
                         }
-                    }); 
+                    });
                 }
             }
+
             // //Extraer llaves iniciales del segundo nivel
             if (this.keysHijas.length == 0) { //Iniciar los valores
                 this.keys.forEach(key => {
@@ -104,6 +106,7 @@ export class AppComponent implements OnInit {
 
                 });
             }
+
             //Saca los elementos opcionales del segundo nivel, ademas de vincular cada elemento con su padre
             this.keys.forEach(key => {
                 if (this.isObject(post[key]))
@@ -119,7 +122,7 @@ export class AppComponent implements OnInit {
                         if (!esta) {
                             this.keysHijas.push(a);
                             if (!this.optionals[a])
-                            this.optionals[a] = a;
+                                this.optionals[a] = a;
                             if (!this.sons[a])
                                 this.sons[a] = key;
                         }
@@ -128,7 +131,8 @@ export class AppComponent implements OnInit {
 
                 if (this.tipes[key] == null)
                     this.tipes[key] = this.isType(post[key]);
-                });
+            });
+
             //Saca los tipos de los elementos opcionales de los elementos mayores, y les vincula sus respectivos elementos hijos.
             this.keys3.forEach(key => {
                 if (this.tipes[key] == null)
@@ -152,6 +156,7 @@ export class AppComponent implements OnInit {
                 }
             });
         });
+
         //Añade las llaves de los elementos opcionales al conjuntos de llaves mayores.
         this.keys = this.keys.concat(this.keys3);
     }
@@ -164,15 +169,18 @@ export class AppComponent implements OnInit {
     onCheck(v: boolean, key: string, keyH: string) {
         this.test[key][keyH] = v;
     }
+
     onCheck2(v: boolean, key: string) {
         this.test[key] = v;
     }
+
     onCheckBox(checked, key: string, keyH: string) {
         if (!checked)
             this.test[key][keyH] = null;
     }
 
-    //haber si podemos eliminar la dependencia en variables locales, El id lo presupondremos como clave primaria de los elementos.
+    //El metodo que usaremos para añadir mediante post objetos al json, en el se le asignara un id
+    //que en caso de que se borrara uno con un id inferior al ultimo el objeto ocupara el id faltante.
     addb(test) {
         let idp: number = 1;
         let cont = true
@@ -197,15 +205,12 @@ export class AppComponent implements OnInit {
 
     }
 
-    //tal vez mejor llevarlo a otro componente si es que acabo haciendo la tabla y el formulario en otro componente
+    //Pasa los valores del post objetivo al formulario, en el cual se podra modificar
     alform(post) {
-        //this.title = post.datos.title;
-        //this.category = post.datos.category;
-        //this.id = post.id;
-        //this.estado = post.varios.estado;
         this.test = JSON.parse(JSON.stringify(post));
     }
-    //haber si podemos eliminar completamente la dependencia en variables locales.
+
+    //Modificara el valor del objeto dentro del json al que se hace referencia.
     modificar(post) {
         if (this.validar(post)) {
             this.appservice.update(DATA2, post).subscribe(
@@ -217,6 +222,7 @@ export class AppComponent implements OnInit {
         }
     }
 
+    //Elimina el objeto correspondiente.
     delet(post) {
         this.appservice.delete(DATA2, post.id).subscribe(
             data => null,
@@ -237,7 +243,7 @@ export class AppComponent implements OnInit {
 
                 };
         };
-       
+
         this.validation = val;
         return this.validation;
 

@@ -187,6 +187,7 @@
                                                             <div *ngIf="tipes[keyH] == 'boolean'" class="form-group row">
                                                                 <label class="col-xs-4 col-sm-2 col-form-label">{{keyH}}: <span class="required">*</span></label>
                                                                 <div class="col-xs-8">
+                                                                <!--Seria conveniente poder cambiar el checkbox para que cuando no tenga ninguno marcado devuelva null-->
                                                                     <label class="checkbox-inline"><input type="checkbox" [name]="keyH" (change)="onCheck(true, key, keyH)" [checked]="test[key][keyH]" value=true />Verdadero</label>
                                                                     <label class="checkbox-inline"><input type="checkbox" [name]="keyH" (change)="onCheck(false, key, keyH)" [checked]="test[key][keyH]==false" value=false />Falso</label>
                                                                 </div>

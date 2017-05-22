@@ -152,7 +152,8 @@ var AppComponent = (function () {
         if (!checked)
             this.test[key][keyH] = null;
     };
-    //haber si podemos eliminar la dependencia en variables locales, El id lo presupondremos como clave primaria de los elementos.
+    //El metodo que usaremos para añadir mediante post objetos al json, en el se le asignara un id
+    //que en caso de que se borrara uno con un id inferior al ultimo el objeto ocupara el id faltante.
     AppComponent.prototype.addb = function (test) {
         var _this = this;
         var idp = 1;
@@ -173,15 +174,11 @@ var AppComponent = (function () {
             this.datos.sort;
         }
     };
-    //tal vez mejor llevarlo a otro componente si es que acabo haciendo la tabla y el formulario en otro componente
+    //Pasa los valores del post objetivo al formulario, en el cual se podra modificar
     AppComponent.prototype.alform = function (post) {
-        //this.title = post.datos.title;
-        //this.category = post.datos.category;
-        //this.id = post.id;
-        //this.estado = post.varios.estado;
         this.test = JSON.parse(JSON.stringify(post));
     };
-    //haber si podemos eliminar completamente la dependencia en variables locales.
+    //Modificara el valor del objeto dentro del json al que se hace referencia.
     AppComponent.prototype.modificar = function (post) {
         var _this = this;
         if (this.validar(post)) {
@@ -190,6 +187,7 @@ var AppComponent = (function () {
             }); });
         }
     };
+    //Elimina el objeto correspondiente.
     AppComponent.prototype.delet = function (post) {
         var _this = this;
         this.appservice.delete(DATA2, post.id).subscribe(function (data) { return null; }, function (error) { return _this.errorMessage = error; }, function () { return _this.appservice.getJSON(DATA2).subscribe(function (res) {
