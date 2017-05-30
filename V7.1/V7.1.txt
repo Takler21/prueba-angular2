@@ -1,4 +1,4 @@
 Se ha implementado una funcion que permite el mantenimiento de dos conjuntos de datos al mismo tiempo. 
-ademas va con el nav que permite activar y desactivar esa funcion.
+Ademas va con el nav que permite activar y desactivar esa funcion.
 Con media query.
-y scroll en table.
+Scroll horizonta y vertical en table.
