@@ -1,0 +1,1 @@
+Se ha implementado una funcion que permite el mantenimiento de dos conjuntos de datos al mismo tiempo. ademas va con el nav que permite activar y desactivar esa funcion.
