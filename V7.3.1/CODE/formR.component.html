@@ -65,7 +65,7 @@
         <div class="input-group">
             <input type="text" class="form-control" name="day" pattern="(?:19|20)[0-9]{2}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))" required placeholder="YYYY-MM-DD" [(ngModel)]="obj[key]" #zip="ngModel">
             <span class="input-group-btn">
-                <button class="btn btn-default" type="button" (click)="ocultar()">Go!</button>
+                <button class="btn btn-default" type="button" (click)="ocultar()"><span class="glyphicon glyphicon-calendar"></span></button>
             </span>
         </div>
 
