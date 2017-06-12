@@ -1,5 +1,5 @@
 ﻿    <!--STRING-->
-<div *ngIf="tipes[key] == 'string'" class="form-group row">
+<div *ngIf="tipes[key] == 'string' && key != 'estados'" class="form-group row">
     <span *ngIf="campos !== null && (utils.isObject(campos[testid]) && campos[testid][key] == key)" class="glyphicon glyphicon-pushpin"></span>
     <label class="col-sm-3 col-form-label">{{key}}: </label>
     <div class="col-xs-11 col-sm-6 col-md-4">
@@ -15,6 +15,29 @@
     </div>
 </div>
 
+<div *ngIf="tipes[key] == 'string' && key == 'estados'" class="form-group row">
+    <span *ngIf="campos !== null && (utils.isObject(campos[testid]) && campos[testid][key] == key)" class="glyphicon glyphicon-pushpin"></span>
+    <label class="col-sm-3 col-form-label">{{key}}: </label>
+    <div class="col-xs-11 col-sm-6 col-md-3">
+        <div>
+            <div id="scrollable-dropdown-menu">
+                <input type="text" class="form-control" name="estados" [(ngModel)]="obj[key]" [typeahead]="statesComplex"
+                       typeaheadOptionField="name" typeaheadMinLength="0"
+                       pattern="[a-zA-Z0-9 .,]{0,24}" maxlength="24" #zip="ngModel" (blur)="comprobar()" />
+            </div>
+            <div *ngIf="zip.errors && (zip.dirty || zip.touched)" class="aler alert-danger">
+                <div [hidden]="!zip.errors.pattern">
+                    Use caracteres permitidos.
+                </div>
+                <div [hidden]="!zip.errors.maxlength">
+                    El campo solo puede tener hasta 24 caracteres.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <!--BOOLEAN-->
 <div *ngIf="tipes[key] == 'boolean'" class="form-group row">
     <span *ngIf="campos !== null && (utils.isObject(campos[testid]) && campos[testid][key] == key)" class="glyphicon glyphicon-pushpin"></span>
@@ -26,7 +49,7 @@
 </div>
 
 <!--NUMERICO-->
-<div *ngIf="tipes[key] !== 'string' && tipes[key] !== 'boolean' && tipes[key] != 'object' && !tipes[key] == 'date'" class="form-group row">
+<div *ngIf="tipes[key] !== 'string' && tipes[key] !== 'boolean' && tipes[key] != 'object' && tipes[key] !== 'date'" class="form-group row">
     <span *ngIf="campos !== null && (utils.isObject(campos[testid]) && campos[testid][key] == key)" class="glyphicon glyphicon-pushpin"></span>
     <label class="col-sm-3 col-form-label">{{key}}: </label>
     <div class="col-xs-11 col-sm-6 col-md-4">
