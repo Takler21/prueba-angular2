@@ -49,7 +49,7 @@
 </div>
 
 <!--NUMERICO-->
-<div *ngIf="tipes[key] !== 'string' && tipes[key] !== 'boolean' && tipes[key] != 'object' && !tipes[key] == 'date'" class="form-group row">
+<div *ngIf="tipes[key] !== 'string' && tipes[key] !== 'boolean' && tipes[key] != 'object' && tipes[key] !== 'date'" class="form-group row">
     <span *ngIf="campos !== null && (utils.isObject(campos[testid]) && campos[testid][key] == key)" class="glyphicon glyphicon-pushpin"></span>
     <label class="col-sm-3 col-form-label">{{key}}: </label>
     <div class="col-xs-11 col-sm-6 col-md-4">
