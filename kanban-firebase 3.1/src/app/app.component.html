@@ -1,0 +1,88 @@
+<div class="container">
+    <header class="page-header">
+        <h1>
+            {{title}}
+        </h1>
+        <div class="changeProjects">
+            <a class="md-button md-gmp-blue-theme md-ink-ripple" ng-transclude="" role="menuitem" (click)="generateDownloadJsonUri()" [href]="downloadJsonHref" download="download.json"> Exportar JSON <div class="md-ripple-container" style=""></div></a>            <button type="button" class="btn btn-default btn-xs inline" (click)="showAddProject()">
+                <i class="fa fa-plus"></i>
+            </button>
+            
+            <select class="form-control" [(ngModel)]="projectSelected" name="Project" (ngModelChange)="onChange($event)">
+                <option *ngFor="let project of projects" [ngValue]="project">{{project.name}}</option>
+            </select>
+
+        </div>
+
+        <div class="fullScreen" *ngIf="toShowAddProject" (click)="cancelAddProject()">
+        </div>
+        <div class="fullScreentransparent" *ngIf="toShowAddProject">
+            <div class="panel panel-default createCard well">
+                <div class="panel-heading">
+                    <h4 class="createTitle">
+                        New Project
+                        <div class="pull-right link" (click)="cancelAddProject()">
+                            <i class="fa fa-window-close"></i>
+                        </div>
+                    </h4>
+                </div>
+                <div class="form-group formfields">
+                    <label for="projectname">Name</label>
+                    <input type="text" class="form-control" id="projectname" placeholder="Project name" [(ngModel)]="projectname">
+                    <!--<input type="text" class="form-control" id="taskdescription" placeholder="description" [(ngModel)]="carddescription">-->
+                </div>
+                <div class="text-center">
+                    <button type="button" class="btn btn-primary" (click)="saveAddProject()">CREATE</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <h3>
+        <button type="button" class="btn btn-default btn-xs inline" (click)="showAddCardList()">
+            <i class="fa fa-plus"></i>
+        </button>
+        Add Card list.
+    </h3>
+
+    <!--Modal para agragar card lists-->
+    <div class="fullScreen" *ngIf="toShowAddCardList" (click)="cancelAddCardList()">
+    </div>
+    <div class="fullScreentransparent" *ngIf="toShowAddCardList">
+        <div class="panel panel-default createCard well">
+            <div class="panel-heading">
+                <h4 class="createTitle">
+                    New Card list
+                    <div class="pull-right link" (click)="cancelAddCardList()">
+                        <i class="fa fa-window-close"></i>
+                    </div>
+                </h4>
+            </div>
+            <div class="form-group formfields">
+                <label for="cardlistname">Name</label>
+                <input type="text" class="form-control" id="cardlistname" placeholder="Card list name" [(ngModel)]="cardlistname">
+                <label for="cardlistcolor">Color</label>
+                <input type="text" class="form-control" id="cardlistcolor" placeholder="Card list color" [(ngModel)]="cardlistcolor">
+                <label for="cardlistorder">Order</label>
+                <input type="number" class="form-control" id="cardlistorder" placeholder="Card list order" [(ngModel)]="cardlistorder" min="0" [max]="cardlists.length">
+
+                <!--<input type="text" class="form-control" id="taskdescription" placeholder="description" [(ngModel)]="carddescription">-->
+            </div>
+            <div class="text-center">
+                <button type="button" class="btn btn-primary" (click)="saveAddCardList()">CREATE</button>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <!--CardList segun el proyecto que este seleccionado
+            Por lo que tengo que tener la variable projectselected
+            para filtrar los cardlist del proyecto por orden.-->
+        <div *ngFor="let cardlist of cardlists" [class]="classrow">
+            <cardlist [item]="cardlist">
+            </cardlist>
+        </div>
+    </div>
+</div>
